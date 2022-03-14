@@ -1,0 +1,43 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>
+        {% if category %}
+            {{ category }} Category
+        {% else %}
+            All 
+        {% endif %}
+        Active Listings
+    </h2>
+
+    <br />
+    
+    {% for list in listing %}
+        <div class="container-fluid" >
+            <div style="margin: 5px 20px;" class="row  align-items-center listing-row">
+                <div class="col justify-content-center" style="padding: 10px 10px 10px 30px;">
+                    {% if list.photo %}
+                        <img width="200" height="200" src="{{ list.photo.url }}" alt="{{ list.title }}"  />
+                    {% else %}
+                        <img width="200" height="200" src="{{ '/media/auctions/photos/no_image_available_001.jpg' }}" alt="{{ list.title }}"  />
+                    {% endif %}
+                </div>
+                <div class="col-10"  >
+                    <div>
+                        <h4>{{ list.title }}</h4>
+                        <p><small>{{ list.description}} </small></p>
+                        <b>Price: </b>${{ list.startBid }}<br/><br/>
+                        <!--p style="font: normal 13px verdana;">{{ list.description }}</p-->
+                        
+                        <!--b>Listed by: </b>{{ list.user.first_name }} {{ list.user.last_name }}<br/-->
+                        <i><small>Created on {{ list.createDate|date:'d M, Y' }} {{ list.createDate|time:'h:i a' }}</small></i><br/><br/>
+                        <a href="{% url 'listing' list.id %}" ><b>View Details</b></a><br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div><h4>No Listing</h4></div>
+    {% endfor %}
+
+{% endblock %}

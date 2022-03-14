@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Your Watch List</h2>
+
+    <br />
+    
+    {% for watch in watchlist %}
+        
+        <div class="container-fluid" >
+            <div class="row  align-items-center listing-row">
+                <div class="col justify-content-center" style="padding: 10px 10px 10px 30px;">
+                    <img width="200" height="200" src="{{ watch.listing.photo.url }}" alt="{{ watch.listing.title }}"  />
+                </div>
+                <div class="col-10"  >
+                    <div>
+                        <h4>{{ watch.listing.title }}</h4>
+                        <b>Price: </b>${{ watch.listing.startBid }}<br/>
+                        <p style="font: normal 13px verdana;">{{ watch.listing.description }}</p>
+                        
+                        <b>Listed by: </b>{{ watch.listing.user.first_name }} {{ watch.listing.user.last_name }}<br/><br/>
+                        <a href="{% url 'listing' watch.listing.id %}" ><b>View Details</b></a><br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div><h4>You are currently not watching any Listing.</h4></div>
+    {% endfor %}
+
+{% endblock %}

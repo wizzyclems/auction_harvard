@@ -1,0 +1,154 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    {% if listing %}
+        <h2>Listing: {{ listing.title }}</h2>
+
+        {% if request.user.is_authenticated %} 
+            {% if not listing.closed %} 
+                {% if not request.user == listing.user %} 
+                    {% if not watching %}
+                        <a href="{% url 'watch' listing.id %}">Start Watching</a>
+                    {% elif watching %}
+                    <span class="badge badge-pill badge-secondary">WatchList</span></a> <a href="{% url 'unwatch' listing.id %}">Stop Watching</a>
+                    {% endif %}
+                {% else %} 
+                        <a href="{% url 'close' listing.id %}">Close Auction</a>
+                        <p>{{ listing.biddings.count }} bid(s) so far.</p>
+                {% endif %}
+            {% else %}
+                {% if not request.user == listing.user %} 
+                    <p>The Bidding has been closed.</p>
+                    {% if highest_bid and request.user == highest_bid.user %}
+                        <p style="color: green;">Yay, you won the bid!!!</p>
+                    {% endif %}
+                {% else %}
+                    <p>The Bidding is now closed.</p>
+                    {% if highest_bid  %}
+                        <p> 
+                            Name: {{ highest_bid.user }} <br >
+                            Bid: ${{ highest_bid.bid }} <br />
+                        </p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        <br />
+        <br />
+
+        {% if message %}
+            <div>{{ message }}</div>
+        {% endif %}
+        {% for error in bidForm.non_field_errors %}
+            <p style="color:red;">{{ error }}</p>
+        {% endfor %}
+        {% for error in commentForm.comment.errors %}
+            <p style="color:red;">{{ error }}</p>
+        {% endfor %}
+
+        <div style="margin: 10px 10px 10px 20px;">
+            <div>
+                {% if listing.photo %}
+                    
+                    <div>
+                        <img style="margin-left: 5%;" width='600' height='400' src="{{ listing.photo.url }}" class="rounded" alt="{{ listing.title }}">
+                    </div>
+                {% else %}
+                    <div>
+                        <img style="margin-left: 5%;" width='600' height='400'  src="{{ '/media/auctions/photos/no_image_available_001.jpg' }}" class="rounded"  alt="{{ listing.title }}"  />
+                    </div>
+                {% endif %}
+            </div>
+            <br />
+            <br />
+            <div>
+                </b><i>{{ listing.description }}</i><br/><br/>
+                <h4>${{ listing.startBid }}</h4>
+            </div>
+        </div>
+       
+        <!-- The below lines of codes allows the user to place a bid if they have logged into the portal. -->
+        {% if request.user.is_authenticated and not listing.closed and request.user != listing.user %}
+
+            <div style="margin: 10px 10px 10px 20px;">
+                <form action="{% url 'place_bid' %}" method="post" >
+                    {% csrf_token %}
+                    
+                    <small>{{ listing.biddings.count }} bid(s) so far. Your bid is the current bid.</small>
+                    
+                    <div class="form-group">
+                        {{ bidForm.bid }}
+                    </div>
+                    <div class="form-group">
+                        {{ bidForm.list_id }}
+                    </div>
+                    <input class="btn btn-primary" type="submit" value="Place Bid">
+                </form>
+            </div>
+
+        {% endif %}
+       
+        <br />
+        <div style="margin: 10px 10px 10px 20px;">
+            <div>
+                <h5>Details</h5>
+                <ul>
+                    <li><b>Listed By:</b> {{ listing.user }}</li>
+                    <li><b>Category:</b> {{ categories }}</li>
+                    <li><b>Create Date:</b> {{ listing.createDate|date:'d M, Y' }} {{ listing.createDate|time:'h:i a' }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <br />
+        <br />
+        <div style="margin: 10px 10px 10px 20px;">
+            <div>
+                <h5>Comments <small><span class="badge badge-pill badge-secondary">{{ listing.comments.count }}</span></a></small></h5>
+                <br />
+                <!-- The below line allows the user to comment on a listing item only if they are logged in -->
+                {% if request.user.is_authenticated and not listing.closed and request.user != listing.user  %}
+                    <div>
+                        <form action="{% url 'add_comment' %}" method="post" >
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ commentForm.text }}
+                            </div>
+                            <div class="form-group">
+                                {{ commentForm.list_id }}
+                            </div>
+                            <input class="btn btn-primary" type="submit" value="Add Comment">
+                        </form>
+                    </div>
+                    <br/>
+                {% endif %}
+
+                <!-- The below line lists out all comments associated with a listing. -->
+                <div>
+                    {% for comment in listing.comments.all %}
+                        <div class="media border p-3">
+                            <img src="{{ '/media/user.png' }}" alt="{{comment.user}}" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+                            <div class="media-body">
+                              <h6>{{comment.user}} <small><i> posted on {{ comment.createDate|date:'d M, Y' }} {{ comment.createDate|time:'h:i a' }}</i></small></h6>
+                              <p>{{comment.text}}</p>
+                            </div>
+                        </div>
+
+                        {% empty %}
+                            <p>No comments added to this listing.</p>
+
+                    {% endfor %}
+                    <br/>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <h2>Listing</h2>
+        <p style="color: red;">There is no such listing in the system.</p>
+    {% endif %}
+
+
+{% endblock %}
