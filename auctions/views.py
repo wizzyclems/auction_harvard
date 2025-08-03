@@ -1,10 +1,13 @@
+from urllib.parse import urlencode
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+import jwt
 
 from .models import Category, Listing, User,Bid,Comment, WatchList
 from .forms import AddListingForm, BidForm, CommentForm
@@ -49,6 +52,27 @@ def login_view(request):
         return render(request, "auctions/login.html",{
             "redirect": next
         })
+
+
+@login_required
+def jwt_sso_login(request):
+    redirect_uri = request.GET.get('redirect_uri')
+    if not redirect_uri:
+        return HttpResponseBadRequest("Missing redirect_uri")
+
+    user = request.user
+    payload = {
+        'sub': str(user.id),
+        'email': user.email,
+        'name': f'{user.first_name} {user.last_name}'
+    }
+
+    token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+
+    # Redirect back with token
+    query = urlencode({'token': token})
+    return redirect(f"{redirect_uri}?{query}")
+
 
 
 def logout_view(request):

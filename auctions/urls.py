@@ -1,4 +1,3 @@
-from django.conf.urls import url
 from django.urls import path
 
 from django.conf.urls.static import static
@@ -22,8 +21,8 @@ urlpatterns = [
     path("listings/watchlist", views.watchlist, name="watchlist"),
     path("listings/categories", views.categories, name="categories"),
     path("listings/categories/<int:cat_id>", views.category_details, name="category_details"),
-    path("listings/close/<int:list_id>", views.close_auction, name="close")
-
+    path("listings/close/<int:list_id>", views.close_auction, name="close"),
+    path('sso/jwt/login/', views.jwt_sso_login, name='jwt_sso_login'),
 ]
 
 
