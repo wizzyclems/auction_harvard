@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn daemon for Auction App.
+After=network.target
+
+[Service]
+User=app_user
+Group=www-data
+WorkingDirectory=/home/app_user/auction_harvard
+ExecStart=/home/app_user/auction_harvard/.venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/auction_app/auction_app.sock commerce.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+

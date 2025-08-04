@@ -1,4 +1,5 @@
 from urllib.parse import urlencode
+import uuid
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
@@ -8,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 import jwt
-
+from django.utils import timezone
 from .models import Category, Listing, User,Bid,Comment, WatchList
 from .forms import AddListingForm, BidForm, CommentForm
 
@@ -61,10 +62,15 @@ def jwt_sso_login(request):
         return HttpResponseBadRequest("Missing redirect_uri")
 
     user = request.user
+
     payload = {
-        'sub': str(user.id),
+        "iat": int(timezone.now().timestamp()),
+        "jti": str(uuid.uuid4()) ,
+        'name': f'{user.first_name} {user.last_name}',
         'email': user.email,
-        'name': f'{user.first_name} {user.last_name}'
+        'external_id': f'AH-{user.id}',
+        'organization': "Auction House",
+        'tags': "sso_auth_user"
     }
 
     token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
