@@ -86,7 +86,6 @@ def jwt_sso_login(request):
         'return_to': urlencode(redirect_uri)
     }
 
-
     return render(request, 'auto_post_jwt_form.html', context)
 
 
