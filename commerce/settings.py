@@ -24,7 +24,7 @@ SECRET_KEY = '6ps8j!crjgrxt34cqbqn7x&b3y%(fny8k8nh21+qa)%ws3fh!q'
 
 
 # This secret key is used for signing JWT tokens.
-JWT_SECRET_KEY = 'your-very-secret-key'  # Keep this safe
+JWT_SECRET_KEY = '8XyJj7CwL7Qb36MmrLIiShBmdy4zb9wnZXFyb3j7l8hDDiwW'  # Keep this safe
 JWT_ALGORITHM = 'HS256'
 
 LOGIN_URL = 'login'

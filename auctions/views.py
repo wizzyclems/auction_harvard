@@ -57,7 +57,7 @@ def login_view(request):
 
 @login_required
 def jwt_sso_login(request):
-    redirect_uri = request.GET.get('redirect_uri')
+    redirect_uri = request.GET.get('return_to')
     if not redirect_uri:
         return HttpResponseBadRequest("Missing redirect_uri")
 
@@ -76,8 +76,19 @@ def jwt_sso_login(request):
     token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
     # Redirect back with token
-    query = urlencode({'token': token})
-    return redirect(f"{redirect_uri}?{query}")
+    # query = urlencode({'token': token})
+    # return_to={redirect_uri}&{query}
+    #return redirect(f"https://z3n-zunes.zendesk.com/access/jwt?&return_to={redirect_uri}&{query}")
+    #return redirect(f"{redirect_uri}?{query}")
+
+    context = {
+        'jwt_token': token,
+        'return_to': urlencode(redirect_uri)
+    }
+
+
+    return render(request, 'auto_post_jwt_form.html', context)
+
 
 
 

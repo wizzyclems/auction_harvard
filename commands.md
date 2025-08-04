@@ -43,6 +43,15 @@ deactivate
 
 ## Django Gunicorn Service
 
+### create the network socket for the app
+sudo mkdir -p /run/auction_app
+sudo chown app_user:www-data /run/auction_app
+sudo chmod 770 /run/auction_app
+
+### Verify socket ownership
+ls -lZ /run/auction_app/auction_app.sock
+
+
 ### See app sysstem logs
 sudo journalctl -u auction_app --no-pager
 
