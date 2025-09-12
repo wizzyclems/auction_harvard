@@ -54,7 +54,7 @@ jobs:
           python3 manage.py collectstatic --noinput || exit 1
 
           echo "[6/6] Restarting Auctions App Gunicorn service..."
-          sudo systemctl restart auction_app || exit 1
+          sudo  systemctl restart auction_app || exit 1
 
           echo "✅ Deployment complete."
 
