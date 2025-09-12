@@ -6,7 +6,7 @@ name: Deploy Django App to Test Server
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -32,10 +32,10 @@ jobs:
         ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
 
           # Change to the app directory
-          cd /home/app_user/auctions_harvard_git || exit 1
+          cd /home/app_user/auction_harvard || exit 1
 
           echo "[1/6] Pulling latest code from GitHub..."
-          git pull origin main || exit 1
+          git pull origin master || exit 1
 
           echo "[2/6] Activating virtual environment..."
           source .venv/bin/activate || exit 1
@@ -49,9 +49,11 @@ jobs:
           echo "[5/6] Collecting static files..."
           python3 manage.py collectstatic --noinput || exit 1
 
-          echo "[6/6] Restarting Gunicorn service..."
-          # sudo systemctl restart gunicorn || exit 1
+          echo "[6/6] Restarting Auctions App Gunicorn service..."
+          sudo systemctl restart auction_app || exit 1
 
           echo "✅ Deployment complete."
+
+          deactivate
 
         EOF
