@@ -1,0 +1,59 @@
+# This workflow will deploy Auctions App to my test server.
+
+name: Deploy Auctions App to Server
+
+# Trigger deployment when code is pushed to the main branch
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code (optional for SSH-only deployment)
+    # - name: Checkout repository (optional)
+    #   uses: actions/checkout@v3
+
+    # Step 2: Set up SSH access to your server
+    - name: Set up SSH connection
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    # Step 3: SSH into your test server and run all deployment commands
+    - name: Deploy Django app on remote server
+      run: |
+        ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+
+          # Change to the app directory
+          cd /home/app_user/auction_harvard || exit 1
+
+          echo "[1/6] Pulling latest code from GitHub..."
+          git pull origin master || exit 1
+
+          echo "[2/6] Activating virtual environment..."
+          source .venv/bin/activate || exit 1
+
+          echo "[3/6] Installing Python dependencies..."
+          pip install -r requirements.txt || exit 1
+
+          echo "[4/6] Running database migrations..."
+          python3 manage.py migrate || exit 1
+
+          echo "[5/6] Collecting static files..."
+          python3 manage.py collectstatic --noinput || exit 1
+
+          echo "[6/6] Restarting Auctions App Gunicorn service..."
+          sudo systemctl restart auction_app || exit 1
+
+          echo "✅ Deployment complete."
+
+          deactivate
+
+        EOF
