@@ -1,3 +1,4 @@
+import time
 from urllib.parse import urlencode
 import uuid
 from django.conf import settings
@@ -61,10 +62,12 @@ def jwt_sso_login(request):
     if not redirect_uri:
         return HttpResponseBadRequest("Missing redirect_uri")
 
+    print(f"Redirect URI: {redirect_uri}")
+    
     user = request.user
 
     payload = {
-        "iat": int(timezone.now().timestamp()),
+        "iat": int(time.time()),
         "jti": str(uuid.uuid4()) ,
         'name': f'{user.first_name} {user.last_name}',
         'email': user.email,
@@ -83,11 +86,24 @@ def jwt_sso_login(request):
 
     context = {
         'jwt_token': token,
-        'return_to': urlencode(redirect_uri)
+        'return_to': redirect_uri
     }
 
-    return render(request, 'auto_post_jwt_form.html', context)
+    print("Token generated successfully.")
+    print("Redirecting to the form submission page.")
+    return render(request, 'auctions/auto_post_jwt_form.html', context)
 
+
+def jwt_sso_exit(request):
+    
+    message = request.GET.get("message") 
+    kind = request.GET.get("kind")
+    
+    print(f"Error message from Zendesk: {message}")
+    print(f"Kind from Zendesk: {kind}")
+    
+    logout(request)
+    return HttpResponseRedirect(reverse("index"))
 
 
 
@@ -101,6 +117,9 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
+        givenname = request.POST["givenname"]
+        familyname = request.POST["familyname"]
+
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -111,8 +130,7 @@ def register(request):
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
-            user.save()
+            user = User.objects.create_user(username, email, password, first_name=givenname, last_name=familyname)
         except IntegrityError:
             return render(request, "auctions/register.html", {
                 "message": "Username already taken."

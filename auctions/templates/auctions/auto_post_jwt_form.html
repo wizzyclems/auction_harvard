@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Redirecting...</title>
+    <meta charset="UTF-8">
 </head>
 <body onload="document.forms[0].submit();">
     <form action="https://z3n-zunes.zendesk.com/access/jwt" method="POST">
-        <input type="hidden" name="token" value="{{ jwt_token }}">
+        <input type="hidden" name="jwt" value="{{ jwt_token }}">
         <input type="hidden" name="return_to" value="{{ return_to }}">
         <noscript>
             <p>JavaScript is disabled. Click the button to continue:</p>

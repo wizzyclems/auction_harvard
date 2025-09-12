@@ -1,5 +1,14 @@
 test123@
 
+Test123@
+
+Testing123@
+
+ISP Public IP: 86.40.95.56
+https://86.40.95.56/
+https://www.auctions.com.ng
+https://auctions.com.ng
+
 ## Useful Django commands
 python3 manage.py startapp appname
 python3 manage.py runserver
@@ -30,7 +39,6 @@ tar -xvf auction_harvard.tar.gz
 curl ifconfig.me
 curl -s checkip.dyndns.org | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+'
 
-86.41.71.177
 
 ## Setup app environment
 cd auctions_harvard
@@ -55,8 +63,6 @@ ls -lZ /run/auction_app/auction_app.sock
 ### See app sysstem logs
 sudo journalctl -u auction_app --no-pager
 
-sudo systemctl restart auction_app
-
 sudo chown -R app_user:www-data /home/app_user/auction_harvard/static
 sudo chmod -R 755 /home/app_user/auction_harvard/static
 
@@ -79,7 +85,7 @@ sudo systemctl daemon-reload
 ### start and enable the app service
 sudo systemctl start auction_app
 sudo systemctl enable auction_app
-
+sudo systemctl restart auction_app
 
 
 ## Nginx Configuration
@@ -112,7 +118,7 @@ sudo tail -n 50 /var/log/nginx/error.log
 
 
 
-curl -I http://auctions.com.ng
+curl -I https://auctions.com.ng
 
 
 ### SSL for nginx 
@@ -152,3 +158,21 @@ cat ~/.ssh/id_rsa.pub
 ### paste the auth key in the ssh's authorized keys of our new user
 nano ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
+
+
+## SQLite3
+
+### Connect to SQlite3 db from the terminal
+sqlite3 dbname
+
+### Useful SQLite3 commands
+
+| Task                       | Command                   |
+| -------------------------- | ------------------------- |
+| View all tables            | `.tables`                 |
+| Describe a table schema    | `.schema table_name`      |
+| Show all commands          | `.help`                   |
+| Run SQL                    | `SELECT * FROM my_table;` |
+| Exit SQLite                | `.exit` or `Ctrl+D`       |
+| Read SQL from a file       | `.read script.sql`        |
+| Show current database file | `.databases`              |

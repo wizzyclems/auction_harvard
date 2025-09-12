@@ -11,6 +11,7 @@ urlpatterns = [
     path("listings", views.index, name="index"),
     path("listings/<int:list_id>", views.listing_detail, name="listing"),
     path("login", views.login_view, name="login"),
+    path("login/", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("addlisting", views.addListing, name="add_listing"),
@@ -22,7 +23,11 @@ urlpatterns = [
     path("listings/categories", views.categories, name="categories"),
     path("listings/categories/<int:cat_id>", views.category_details, name="category_details"),
     path("listings/close/<int:list_id>", views.close_auction, name="close"),
-    path('sso/jwt/login/', views.jwt_sso_login, name='jwt_sso_login'),
+    path('sso/jwt/access', views.jwt_sso_login, name='jwt_sso_access'),
+    path('sso/jwt/access/', views.jwt_sso_login, name='jwt_sso_access'),
+    path('sso/jwt/exit', views.jwt_sso_exit, name='jwt_sso_exit'),
+    path('sso/jwt/exit/', views.jwt_sso_exit, name='jwt_sso_exit'),
+
 ]
 
 
