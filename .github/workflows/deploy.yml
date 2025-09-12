@@ -1,6 +1,6 @@
 # This workflow will deploy Auctions App to my test server.
 
-name: Deploy Django App to Test Server
+name: Deploy Auctions App to Server
 
 # Trigger deployment when code is pushed to the main branch
 on:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Test Server
+    name: Deploy to Server
     runs-on: ubuntu-latest
 
     steps:
