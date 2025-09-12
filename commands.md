@@ -177,4 +177,3 @@ sqlite3 dbname
 | Read SQL from a file       | `.read script.sql`        |
 | Show current database file | `.databases`              |
 
-force commit on the branch

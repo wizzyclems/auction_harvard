@@ -35,7 +35,7 @@ LOGOUT_REDIRECT_URL = 'index'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['86.41.71.177','192.168.1.13', 'localhost','127.0.0.1', 'auctions.com.ng','www.auctions.com.ng']
+ALLOWED_HOSTS = ['86.40.95.56','192.168.1.13', 'localhost','127.0.0.1', 'auctions.com.ng','www.auctions.com.ng']
 
 
 # Application definition
