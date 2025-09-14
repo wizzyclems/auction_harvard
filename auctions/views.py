@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -24,27 +24,68 @@ def index(request):
 
 
 def login_view(request):
-    if request.method == "POST":
+    """ 
+        This method sends verification code to the email address the user wants to use for sign up.
+    """
 
-        # Attempt to sign user in
-        username = request.POST["username"]
-        password = request.POST["password"]
-        forward_to = request.POST["redirect"]
-        user = authenticate(request, username=username, password=password)
+    print("Login view called...")
+    print(f"request method is : {request.method}")
 
-        # Check if authentication successful
-        if user is not None:
-            login(request, user)
+    if request.method == 'POST':
+        # response_to_client.update( {'message': 'Unauthorized request', status: 301, 'success': False} )
+        # return JsonResponse( response_to_client, safe=False, status=status )
+
+        import json
+
+        status = 301
+        response_to_client = {'message': 'Invalid email address or password.', 'status': status, 'success': False}
+
+    
+        request_body = json.loads(request.body)
+        username = request_body.get("username","")
+        password = request_body.get("password","")
+        redirect = request_body.get("redirect", "")
             
-            if forward_to != 'None':
-                return redirect(forward_to)
-                #return HttpResponseRedirect(reverse(redirect))
+        try:
 
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            return render(request, "auctions/login.html", {
-                "message": "Invalid username and/or password."
-            })
+            print(f"Authenticating the user with Username - {username}")
+            user = authenticate(request, username=username, password=password)
+
+            # Check if authentication successful
+            if user is None:
+                status=401
+                response_to_client.update( {'message': 'Invalid username and/or password!', 'status': status, 'success': False} )
+                return JsonResponse( response_to_client, safe=False, status=status )
+                    
+            
+            print(f"User {user} successfully authenticated. Now logging in...")
+            login(request, user)
+            print(f"User {user} successfully logged in.")
+
+            payload = {
+                'scope': 'user',
+                'name': f'{user.first_name} {user.last_name}',
+                'email': user.email,
+                'external_id': f'AH-{user.id}',
+                'organization': "Auction House"
+            }
+
+            print(f"Generating JWT token for user {user}...")
+            token = jwt.encode(payload, settings.ZENDESK_MESSAGING_SIGNING_KEY, 
+                            algorithm=settings.JWT_ALGORITHM,
+                            headers={'kid': settings.ZENDESK_MESSAGING_KEY_ID, "typ": "JWT", "alg": settings.JWT_ALGORITHM})
+
+            status = 201
+            response_to_client.update( {'message': 'User is successfully authenticated.', 'status': status, 'success': True, 'token': token} )
+            print(f"Token generated successfully for user {user}.")
+        except Exception as e:
+            print(e)
+            status=500
+            response_to_client.update( {'message': 'An unexpected error occurred. Verification code not sent!', 'status': status, 'success': False} )
+
+
+        return JsonResponse( response_to_client, safe=False, status=status)
+    
     else:
         try:
             next = request.GET['next']
@@ -54,6 +95,39 @@ def login_view(request):
         return render(request, "auctions/login.html",{
             "redirect": next
         })
+
+
+# def login_view(request):
+#     if request.method == "POST":
+
+#         # Attempt to sign user in
+#         username = request.POST["username"]
+#         password = request.POST["password"]
+#         forward_to = request.POST["redirect"]
+#         user = authenticate(request, username=username, password=password)
+
+#         # Check if authentication successful
+#         if user is not None:
+#             login(request, user)
+            
+#             if forward_to != 'None':
+#                 return redirect(forward_to)
+#                 #return HttpResponseRedirect(reverse(redirect))
+
+#             return HttpResponseRedirect(reverse("index"))
+#         else:
+#             return render(request, "auctions/login.html", {
+#                 "message": "Invalid username and/or password."
+#             })
+#     else:
+#         try:
+#             next = request.GET['next']
+#         except Exception:
+#             next = None
+
+#         return render(request, "auctions/login.html",{
+#             "redirect": next
+#         })
 
 
 @login_required

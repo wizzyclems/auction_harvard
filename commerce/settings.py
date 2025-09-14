@@ -23,6 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '6ps8j!crjgrxt34cqbqn7x&b3y%(fny8k8nh21+qa)%ws3fh!q'
 
 
+# Zendesk Messaging 
+ZENDESK_MESSAGING_SIGNING_KEY = '-aGZBZpAEgF9AyZ9qWc6m7dxjRMVJfrceskyHPbtsX8NzilOhiUN4UQjxyFVfg2qFr58wUNeqHDSG_HeziMu8w'
+ZENDESK_MESSAGING_KEY_ID = 'app_68c720ebb21a1f03ddd01f2f'
+
 # This secret key is used for signing JWT tokens.
 JWT_SECRET_KEY = '8XyJj7CwL7Qb36MmrLIiShBmdy4zb9wnZXFyb3j7l8hDDiwW'  # Keep this safe
 JWT_ALGORITHM = 'HS256'
@@ -131,6 +135,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, "auctions/static"),]
+# print(f"BASE_DIR is {STATICFILES_DIRS}")
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'

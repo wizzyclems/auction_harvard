@@ -19,7 +19,7 @@ python3 manage.py migrate
 pip freeze > requirements.txt
 
 ## Change a user's password
-python manage.py changepassword your_username
+python3 manage.py changepassword your_username
 
 sudo adduser app_user
 sudo usermod -aG sudo app_user
@@ -45,8 +45,8 @@ cd auctions_harvard
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python manage.py collectstatic 
-python manage.py migrate
+python3 manage.py collectstatic 
+python3 manage.py migrate
 deactivate
 
 ## Django Gunicorn Service
