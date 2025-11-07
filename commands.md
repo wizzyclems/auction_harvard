@@ -7,7 +7,13 @@ Testing123@
 ISP Public IP: 86.40.95.56
 https://86.40.95.56/
 https://www.auctions.com.ng
-https://auctions.com.ng
+https://auctions.com.ng-
+
+Servers
+p5h-1 - 192.168.1.13 - nginx, auctions app
+p5h-2 - 192.168.1.14
+p5-1 - 192.168.1.14 - DB
+
 
 ## Useful Django commands
 python3 manage.py startapp appname
@@ -51,10 +57,16 @@ deactivate
 
 ## Django Gunicorn Service
 
-### create the network socket for the app
+### create the network socket for the app. If the app is not running.
 sudo mkdir -p /run/auction_app
 sudo chown app_user:www-data /run/auction_app
 sudo chmod 770 /run/auction_app
+<!-- sudo nano /run/auction_app/auction_app.sock
+sudo chown app_user:www-data /run/auction_app/auction_app.sock
+sudo chmod 777 /run/auction_app/auction_app.sock -->
+sudo usermod -aG www-data app_user
+sudo systemctl restart auction_app.service
+
 
 ### Verify socket ownership
 ls -lZ /run/auction_app/auction_app.sock
@@ -72,9 +84,7 @@ sudo chmod 755 /home/app_user/auction_harvard
 sudo chown -R app_user:www-data /home/app_user/auction_harvard/media
 sudo chmod -R 755 /home/app_user/auction_harvard/media
 
-sudo chown app_user:www-data /home/app_user/auction_harvard/auction_app.sock
-sudo chmod 777 /home/app_user/auction_harvard/auction_app.sock
-sudo usermod -aG www-data app_user
+
 
 ### create a service file for our app
 sudo nano /etc/systemd/system/auction_app.service

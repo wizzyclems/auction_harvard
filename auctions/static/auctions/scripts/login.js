@@ -38,6 +38,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             console.log("Login successful. Now logging in to Zendesk...");
+
+            // No need to login to messaging if redirect to another site. Check if redirect is jwt sso request
+            if( redirect && redirect.includes("jwt") ) {
+                console.log("Redirect URL contains JWT SSO. Skipping Zendesk messaging login.");
+                // Redirect to the specified URL on successful login
+                host = window.location.origin;
+                console.log("Host:", host);
+                const jwtRedirect = `${host}${encodeURIComponent(redirect)}`;
+                console.log("Redirecting to:", jwtRedirect);    
+                window.location.href = jwtRedirect;
+                return;
+            }
+
+
             window.zE('messenger', 'loginUser', function(callback) {
                 callback(response.token);
             }, function loginCallback(error) {
