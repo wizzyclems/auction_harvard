@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(`The content of redirect is: ${redirect}`);
             
             // No need to login to messaging if redirect to another site. Check if redirect is jwt sso request
-            if( redirect && redirect.includes("jwt") ) {
+            if( redirect && redirect.includes("sso/jwt/access") ) {
                 console.log("Redirect URL contains JWT SSO. Skipping Zendesk messaging login.");
                 // Redirect to the specified URL on successful login
                 host = window.location.origin;
